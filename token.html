@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+    <html>
+    <head>
+        <title>LOKI</title> 
+        <!-- This styling is for the canvas demonstration purposes. It is recommended 
+    that style is moved to separate file for organization in larger projects -->
+        <style>
+            html, body {
+                height: 100%;
+            }
+            body {
+                margin: 0;
+            }
+            h1 {
+                font-size: 16px;
+                font-family: Segoe UI;
+                line-height: 20px;
+                color: whitesmoke;
+                display: table-cell;
+                padding: 13px 0px 0px 20px;
+            }
+            .heading {
+                background-color: #691669;
+                height: 50px;
+            }
+            .main {
+                margin: 18px;
+                border-radius: 4px;
+            }
+
+            div[role="form"]{
+                background-color: white;
+            }        
+            #webchat {
+                position: fixed;
+                height: 65%;
+				
+                width: 100%;
+                top: 50px;
+                overflow: hidden;
+            }
+			.chat-body{
+			height:300px;
+			display:flex;
+			}
+			.markdown
+			{
+			padding : 8px;
+			background : White;
+			margin : 5px;
+			width: max-content
+			border-radius:10px 5px 10px 10px;
+			}
+			button{
+			width: 70%;
+			}
+			
+          </style>
+    </head>
+    <body>
+        <div>
+            <div class="heading">
+
+                <!-- Change the h1 text to change the bot name -->    
+                <h1>Loki</h1>
+
+            </div>
+			
+            <div id="webchat" role="main"></div>
+			
+        </div>    
+      <script src="https://cdn.botframework.com/botframework-webchat/latest/webchat.js"></script>
+      <script>
+            const styleOptions = {
+               // Add styleOptions to customize web chat canvas
+               hideUploadButton: true,
+			   suggestedActionBackground: 'White',
+			   suggestedActionBorderWidth: 2,
+			   suggestedActionHeight: 30,
+			   suggestedActionLayout: 'stacked',	// either "carousel" or "stacked"
+			   suggestedActionsStackedLayoutButtonTextWrap:1,
+			   suggestedActionBorderRadius: 2,
+			   //suggestedActionHeight: 40,			   
+			   suggestedActionsFlowMaxHeight:140,
+		    	   suggestedActionBorderRadius: 20,
+			   suggestedActionTextColor:"Blue",
+			   suggestedActionBackgroundColor:"White",
+			   suggestedActionBorderColor:"rgb(230, 230, 230)",
+
+			  //suggestedActionBorder: null, // split into 3, null
+			  //suggestedActionBorderColor: undefined, // defaults to accent
+			  //suggestedActionBorderRadius: 0,
+			  //suggestedActionBorderStyle: 'solid',
+			  //suggestedActionDisabledBackground: undefined, // defaults to suggestedActionBackground
+			  //suggestedActionDisabledBorder: null,
+			  //suggestedActionDisabledBorderColor: '#E6E6E6',
+			  //suggestedActionDisabledBorderStyle: 'solid',
+			  //suggestedActionDisabledBorderWidth: 2,
+			  //suggestedActionDisabledTextColor: undefined, // defaults to subtle
+			  //suggestedActionImageHeight: 20,
+			  //suggestedActionTextColor: null,
+			  bubbleBackground: 'White',
+			  bubbleBorderColor: '#E6E6E6',
+			  bubbleBorderRadius: 10,
+			  bubbleBorderStyle: 'solid',
+			  bubbleBorderWidth: 1,
+			  bubbleFromUserBackground: 'White',
+			  bubbleFromUserBorderColor: '#E6E6E6',
+			  bubbleFromUserBorderRadius: 10,
+			  bubbleFromUserBorderStyle: 'solid',
+			  bubbleFromUserBorderWidth: 1,
+			  bubbleFromUserNubOffset: 0,
+			  bubbleFromUserNubSize: undefined,
+			  bubbleFromUserTextColor: 'Black',
+			  bubbleImageHeight: 240,
+			  bubbleMaxWidth: 450, // Based off screen width = 600px
+			  bubbleMinHeight: 40,
+			  bubbleMinWidth: 250, // min screen width = 300px; Microsoft Edge requires 372px (https://developer.microsoft.com/en-us/microsoft-edge/platform/issues/13621468/)
+			  bubbleNubOffset: 0,
+			  bubbleNubSize: undefined,
+			  bubbleTextColor: 'Black',
+			  messageActivityWordBreak: 'break-word',
+			  
+            };
+
+            // Add your BOT ID below
+	    //Shravya
+            var BOT_ID = "3e92040d-0d3d-4594-a472-caac546e47d4"; 
+	    //Abdul Kareem
+	    //var BOT_ID = "867e9be9-14b8-4612-9f83-340ba085259d";
+	    //Ujjawal
+	    //var BOT_ID = "04226cae-51e4-435d-a411-1a1880658e19";
+            var theURL = "https://powerva.microsoft.com/api/botmanagement/v1/directline/directlinetoken?botId=" + BOT_ID;
+
+            const store = window.WebChat.createStore(
+               {},
+               ({ dispatch }) => next => action => {
+                   if (action.type === "DIRECT_LINE/CONNECT_FULFILLED") {
+                      dispatch({
+                          meta: {
+                               method: "keyboard",
+                           },
+                           payload: {
+                               activity: {
+                                     channelData: {
+                                          postBack: true,
+                                     },
+                                      //Web Chat will show the 'Greeting' System Topic message which has a trigger-phrase 'hello'
+                                      name: 'startConversation',
+                                      type: "event"
+                                 },
+                            },
+                            type: "DIRECT_LINE/POST_ACTIVITY",
+                       });
+                 }
+                 return next(action);
+              }
+           );
+           fetch(theURL)
+                .then(response => response.json())
+                .then(conversationInfo => {
+                    window.WebChat.renderWebChat(
+                        {
+                            directLine: window.WebChat.createDirectLine({
+                                token: conversationInfo.token,
+                            }),
+                            store: store,
+                            styleOptions: styleOptions
+                        },
+                        document.getElementById('webchat')
+                    );
+                })
+                .catch(err => console.error("An error occurred: " + err));
+        </script>
+      </body>
+    </html>
